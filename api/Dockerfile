@@ -28,6 +28,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install Laravel dependencies
 RUN composer install --optimize-autoloader --no-dev
 
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 # Set the permissions for the storage and bootstrap/cache directories
 RUN chown -R www-data:www-data storage bootstrap/cache
 
