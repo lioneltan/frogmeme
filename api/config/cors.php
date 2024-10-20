@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://boisterous-travesseiro-42ff1d.netlify.app'], // Allow requests from your Netlify site
+    'allowed_origins' => ['*'], // Allow requests from your Netlify site
 
     'allowed_origins_patterns' => [],
 
@@ -29,6 +29,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true,
+    'supports_credentials' => false,
 
 ];
