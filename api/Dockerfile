@@ -19,23 +19,24 @@ WORKDIR /var/www/html
 # Copy the current directory contents into the container at /var/www/html
 COPY . .
 
-# Remove the vendor directory if it exists
+# Remove the vendor directory if it exists (this is useful in case of rebuilding from cache)
 RUN rm -rf vendor
 
-# Set DocumentRoot to the public folder
+# Set DocumentRoot to the public folder in Apache configuration
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Laravel dependencies
+# Install Laravel dependencies using Composer, optimized for production
 RUN composer install --optimize-autoloader --no-dev
 
-# Set Apache ServerName
+# Set Apache ServerName (to avoid errors related to ServerName)
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Set the permissions for the storage and bootstrap/cache directories
-RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
 # Expose the port Apache is running on
 EXPOSE 80
