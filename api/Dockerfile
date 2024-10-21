@@ -31,6 +31,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install Laravel dependencies using Composer, optimized for production
 RUN composer install --optimize-autoloader --no-dev
 
+# Create storage symlink
+RUN php artisan storage:link
+
 # Set Apache ServerName (to avoid errors related to ServerName)
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
