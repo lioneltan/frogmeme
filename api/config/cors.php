@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://boisterous-travesseiro-42ff1d.netlify.app'], // Allow requests from your Netlify site
+    'allowed_origins' => ['*'], // 
 
     'allowed_origins_patterns' => [],
 
