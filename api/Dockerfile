@@ -19,6 +19,9 @@ WORKDIR /var/www/html
 # Copy the current directory contents into the container at /var/www/html
 COPY . .
 
+# Remove the vendor directory if it exists
+RUN rm -rf vendor
+
 # Set DocumentRoot to the public folder
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
@@ -28,6 +31,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install Laravel dependencies
 RUN composer install --optimize-autoloader --no-dev
 
+# Set Apache ServerName
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Set the permissions for the storage and bootstrap/cache directories
