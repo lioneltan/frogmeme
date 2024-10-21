@@ -1,17 +1,14 @@
 # Use the official PHP image with Apache
 FROM php:8.2-apache
 
-# Install necessary packages and dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install necessary PHP extensions and git
+RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
     git \
-    libzip-dev \
-    libonig-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mbstring zip xml curl \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && docker-php-ext-install gd pdo pdo_mysql
 
 # Enable Apache mod_rewrite and mod_headers
 RUN a2enmod rewrite headers
@@ -30,9 +27,6 @@ RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Set permissions for the working directory
-RUN chown -R www-data:www-data /var/www/html
 
 # Install Laravel dependencies using Composer, optimized for production
 RUN composer install --optimize-autoloader --no-dev
