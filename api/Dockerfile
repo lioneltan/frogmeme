@@ -7,8 +7,10 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     git \
+    libzip-dev \
+    libonig-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql
+    && docker-php-ext-install gd pdo pdo_mysql mbstring zip xml curl
 
 # Enable Apache mod_rewrite and mod_headers
 RUN a2enmod rewrite headers
@@ -27,6 +29,9 @@ RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Set permissions for the working directory
+RUN chown -R www-data:www-data /var/www/html
 
 # Install Laravel dependencies using Composer, optimized for production
 RUN composer install --optimize-autoloader --no-dev
