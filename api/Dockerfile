@@ -13,11 +13,22 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mod_rewrite and mod_headers
 RUN a2enmod rewrite headers
 
+# Install Node.js for Vite build
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
 # Set the working directory
 WORKDIR /var/www/html
 
 # Copy the current directory contents into the container at /var/www/html
 COPY . .
+
+# Install NPM dependencies (for Vite and frontend assets)
+COPY package*.json ./
+RUN npm install
+
+# Build assets with Vite
+RUN npm run build
 
 # Remove the vendor directory if it exists (this is useful in case of rebuilding from cache)
 RUN rm -rf vendor
@@ -37,6 +48,10 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 # Set the permissions for the storage and bootstrap/cache directories
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
+
+# Set the permissions for the public/build directory (where Vite assets are stored)
+RUN chown -R www-data:www-data public/build \
+    && chmod -R 775 public/build
 
 # Expose the port Apache is running on
 EXPOSE 80
