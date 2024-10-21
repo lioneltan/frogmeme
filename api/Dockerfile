@@ -1,8 +1,8 @@
 # Use the official PHP image with Apache
 FROM php:8.2-apache
 
-# Install necessary PHP extensions and git
-RUN apt-get update && apt-get install -y \
+# Install necessary packages and dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libonig-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql mbstring zip xml curl
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mbstring zip xml curl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Enable Apache mod_rewrite and mod_headers
 RUN a2enmod rewrite headers
